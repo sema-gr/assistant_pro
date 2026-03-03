@@ -8,7 +8,6 @@ from utils.voice_engine import speak_async
 import speech_recognition as sr
 
 class Command(BaseCommand):
-    help = 'Запускає голосового асистента'
 
     def handle(self, *args, **options):
         self.stdout.write(self.style.SUCCESS('Асистент запущений...'))
@@ -21,7 +20,7 @@ class Command(BaseCommand):
             self.stdout.write("Налаштування фонового шуму...")
             recognizer.adjust_for_ambient_noise(source, duration=1)
             
-            self.stdout.write(self.style.SUCCESS("👂 Слухаю..."))
+            self.stdout.write(self.style.SUCCESS("Слухаю..."))
 
             while True:
                 try:
@@ -52,7 +51,7 @@ class Command(BaseCommand):
             self.stdout.write("Налаштування фонового шуму...")
             recognizer.adjust_for_ambient_noise(source, duration=1)
             
-            self.stdout.write(self.style.SUCCESS("👂 Слухаю..."))
+            self.stdout.write(self.style.SUCCESS("Слухаю..."))
 
             while True:
                 try:
@@ -64,19 +63,15 @@ class Command(BaseCommand):
                     self.process_command(command_text)
                     
                 except sr.UnknownValueError:
-                    # Це нормально, якщо ви нічого не сказали або шум
                     continue
                 except Exception as e:
                     self.stdout.write(self.style.WARNING(f"Помилка: {e}"))
                     continue
 
-    def process_command(self, text):
+    def process_command(self, text: str):
 
         text = text.lower().strip()
 
-        # =====================================================
-        # 1️⃣ Якщо НЕ "відкрий" → тільки Voice
-        # =====================================================
         if "відкрий" not in text:
             for resp in VoiceResponse.objects.all():
                 if resp.keyword and resp.keyword.lower() in text:
@@ -84,9 +79,6 @@ class Command(BaseCommand):
                     return
             return
 
-        # =====================================================
-        # 2️⃣ Якщо є "відкрий" → шукаємо програму
-        # =====================================================
         found_app = None
 
         for app in AppCommand.objects.all():
@@ -98,9 +90,6 @@ class Command(BaseCommand):
             speak_async("Я не знайшла такої програми.")
             return
 
-        # =====================================================
-        # 3️⃣ Якщо в БД вже є шлях
-        # =====================================================
         if found_app.path and os.path.exists(found_app.path):
             speak_async(f"Відкриваю {found_app.app_name}...")
             self.launch_app(found_app.path)
@@ -119,17 +108,6 @@ class Command(BaseCommand):
             speak_async("Я не змогла знайти програму на цьому комп'ютері.")
 
     def launch_app(self, path):
-        """Універсальний запуск для Windows та Mac"""
-        try:
-            if platform.system() == "Windows":
-                os.startfile(path)
-            else:
-                subprocess.Popen(['open', path])
-        except Exception as e:
-            self.stdout.write(self.style.ERROR(f"Помилка запуску: {e}"))
-
-    def launch_app(self, path):
-        """Універсальний запуск для Windows та Mac"""
         try:
             if platform.system() == "Windows":
                 os.startfile(path)

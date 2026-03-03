@@ -2,7 +2,7 @@ import os
 import platform
 import subprocess
 
-def find_app_path(app_name):
+def find_app_path(app_name: str):
     if platform.system() != "Windows":
         return None
 

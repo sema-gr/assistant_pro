@@ -5,7 +5,6 @@ import time
 import edge_tts
 import pygame
 
-# ініціалізуємо один раз
 pygame.mixer.init()
 
 def speak_task(text):
