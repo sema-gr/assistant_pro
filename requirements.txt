@@ -1,0 +1,13 @@
+django
+
+# Voice Recognition (Слух)
+SpeechRecognition
+PyAudio
+
+# Voice Synthesis (Голос)
+edge-tts
+pygame
+threading
+
+# Networking & Async
+asyncio
