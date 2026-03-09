@@ -37,37 +37,6 @@ class Command(BaseCommand):
                     self.stdout.write(self.style.WARNING(f"Помилка: {e}"))
                     continue
 
-class Command(BaseCommand):
-    help = 'Запускає голосового асистента'
-
-    def handle(self, *args, **options):
-        self.stdout.write(self.style.SUCCESS('Асистент запущений...'))
-        
-        recognizer = sr.Recognizer()
-        mic = sr.Microphone()
-        
-        # Відкриваємо мікрофон один раз для всього циклу
-        with mic as source:
-            self.stdout.write("Налаштування фонового шуму...")
-            recognizer.adjust_for_ambient_noise(source, duration=1)
-            
-            self.stdout.write(self.style.SUCCESS("Слухаю..."))
-
-            while True:
-                try:
-                    # Тепер mic знаходиться всередині блоку with, тому помилки не буде
-                    audio = recognizer.listen(source, timeout=None, phrase_time_limit=5)
-                    command_text = recognizer.recognize_google(audio, language='uk-UA').lower()
-                    
-                    self.stdout.write(f"Ви сказали: {command_text}")
-                    self.process_command(command_text)
-                    
-                except sr.UnknownValueError:
-                    continue
-                except Exception as e:
-                    self.stdout.write(self.style.WARNING(f"Помилка: {e}"))
-                    continue
-
     def process_command(self, text: str):
 
         text = text.lower().strip()
