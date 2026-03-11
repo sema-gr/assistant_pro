@@ -35,9 +35,11 @@ def find_app_path(app_name: str):  # функція пошуку шляху до
     # список папок для ручного пошуку
     if system == "Windows":
         search_dirs = [
-            os.environ.get("ProgramFiles", "C:\\Program Files"),  # папка Program Files
-            os.environ.get("ProgramFiles(x86)", "C:\\Program Files (x86)"),  # папка 32-bit програм
-            os.path.join(os.environ.get("SystemRoot", "C:\\Windows"), "System32"),  # системні програми
+            os.environ.get("ProgramFiles", "C:\\Program Files"),
+            os.environ.get("ProgramFiles(x86)", "C:\\Program Files (x86)"),
+            os.path.join(os.environ.get("SystemRoot", "C:\\Windows"), "System32"),
+            os.path.expanduser("~/AppData/Local/Programs"),
+            os.path.expanduser("~/AppData/Roaming"),
         ]
 
         extensions = [".exe"]  # розширення виконуваних файлів у Windows
@@ -69,3 +71,19 @@ def find_app_path(app_name: str):  # функція пошуку шляху до
                 dirs[:] = []  # зупиняє подальший пошук у глибших папках
 
     return None  # повертає None якщо програму не знайдено
+
+# тест 1 — пошук існуючої програми
+path = find_app_path("notepad")
+print("Test 1 (notepad):", path)
+
+# тест 2 — пошук іншої стандартної програми
+path = find_app_path("cmd")
+print("Test 2 (cmd):", path)
+
+# тест 3 — програма якої не існує
+path = find_app_path("facebook.exe")
+print("Test 3 (facebook):", path)
+
+# тест 4 — перевірка .exe
+path = find_app_path("notepad.app")
+print("Test 4 (notepad.exe):", path)
