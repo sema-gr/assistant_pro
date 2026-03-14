@@ -72,18 +72,19 @@ def find_app_path(app_name: str):  # функція пошуку шляху до
 
     return None  # повертає None якщо програму не знайдено
 
-# тест 1 — пошук існуючої програми
-path = find_app_path("notepad")
-print("Test 1 (notepad):", path)
+test_apps = [
+    {"name": "notepad", "label": "Test 1 (notepad)"},
+    {"name": "cmd.exe", "label": "Test 2 (cmd)"},
+    {"name": "facebook.exe", "label": "Test 3 (не існує)"},
+    {"name": "notepad.app", "label": "Test 4 (невірне розширення)"},
+]
 
-# тест 2 — пошук іншої стандартної програми
-path = find_app_path("cmd")
-print("Test 2 (cmd):", path)
-
-# тест 3 — програма якої не існує
-path = find_app_path("facebook.exe")
-print("Test 3 (facebook):", path)
-
-# тест 4 — перевірка .exe
-path = find_app_path("notepad.app")
-print("Test 4 (notepad.exe):", path)
+for app in test_apps:
+    # Викликаємо функцію пошуку
+    path = find_app_path(app["name"])
+    
+    # Виводимо результат
+    if path:
+        print(f"{app['label']}: Знайдено за шляхом -> {path}")
+    else:
+        print(f"{app['label']}: Програму не знайдено")

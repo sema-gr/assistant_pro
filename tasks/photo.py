@@ -23,7 +23,7 @@ async def process_user_upload(img_id):
 
 async def main():
     # Уявіть, що два користувачі завантажили фото одночасно
-    print("--- Початок обробки черги фото ---")
+    print("Початок обробки черги фото")
     await asyncio.gather(
         process_user_upload("user_1_photo.jpg"),
         process_user_upload("user_2_photo.jpg")
