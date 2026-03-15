@@ -2,6 +2,7 @@ import os
 import platform
 import subprocess
 from django.core.management.base import BaseCommand
+from core.management.commands.add_command import add_new_app_command_voice
 from core.models import AppCommand, VoiceResponse
 from utils.finder import find_app_path
 from utils.voice_engine import speak_async
@@ -31,7 +32,7 @@ class Command(BaseCommand):  # створення Django команди
                     command_text = recognizer.recognize_google(audio, language='uk-UA').lower()
                     
                     self.stdout.write(f"Ви сказали: {command_text}")  # вивід розпізнаного тексту
-                    self.process_command(command_text)  # передача тексту у функцію обробки
+                    self.process_command(command_text, source, recognizer)  # передача тексту у функцію обробки
                     
                 except sr.UnknownValueError:  # якщо мова не розпізнана
                     continue  # перейти до наступної ітерації
@@ -39,7 +40,7 @@ class Command(BaseCommand):  # створення Django команди
                     self.stdout.write(self.style.WARNING(f"Помилка: {e}"))  # вивід помилки
                     continue  # продовжити роботу
 
-    def process_command(self, text: str):  # функція обробки голосової команди
+    def process_command(self, source, recognizer, text: str):  # функція обробки голосової команди
 
         text = text.lower().strip()  # переведення тексту у нижній регістр та видалення пробілів
 
@@ -50,6 +51,11 @@ class Command(BaseCommand):  # створення Django команди
                     speak_async(resp.response)  # відтворення відповіді голосом
                     return  # завершення функції
             return  # якщо відповідь не знайдена
+        
+        if "додати команду" in text:
+            # Викликаємо зовнішню функцію, передаючи їй мікрофон та розпізнавач
+            add_new_app_command_voice(source, recognizer)
+            return
 
         found_app = None  # змінна для знайденої програми
 
